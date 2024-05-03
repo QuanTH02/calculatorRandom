@@ -23,7 +23,7 @@ body {
     margin-left: 20px;
 }
 
-#result, #calculation {
+#result, #calculation, .tichrieng {
     text-align: right;
     /* font-size: 30px; */
 }
@@ -95,12 +95,19 @@ select {
     margin-right: 0px;
 }
 
+.tichrieng {
+    font-size: 20px;
+    width: 110px;
+    margin-right: 0px;
+    display: inline-block;
+    
+}
+
 #divCal {
     width: 160px;
     position: relative; /* Đặt phần tử trong vị trí tương đối */
     left: 50%; /* Di chuyển sang phải 50% so với vị trí gốc */
     transform: translateX(-50%);
-
 }
 
 .inp_num {
@@ -132,4 +139,12 @@ select {
 hr{
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+span{
+    font-size: 20px;
+}
+
+.divTichRieng {
+    margin-top: -7px;
 }

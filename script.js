@@ -3,6 +3,9 @@ var num2Input = document.getElementById('num2');
 var num3Input = document.getElementById('num3');
 var operatorSelect = document.getElementById('operator');
 var calculationDiv = document.getElementById('calculation');
+var divCal = document.getElementById('divCal');
+var resultInput = document.getElementById('result');
+var divStart = document.getElementById('start');
 
 function generateRandomNumber(digits) {
     var min = Math.pow(10, digits - 1);
@@ -10,35 +13,112 @@ function generateRandomNumber(digits) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function generateCalculation() {
-    calculationDiv.innerHTML = '';
-    var num1Digits = parseInt(num1Input.value);
-    var num2Digits = parseInt(num2Input.value);
+function generateRandomNumberDivide(digits, num2) {
+    var min = Math.pow(10, digits - 1);
+    var max = Math.pow(10, digits) - 1;
+    var minDivided = min / num2;
+    var maxDivided = max / num2;
 
-    var operator = operatorSelect.value;
+    var randomDivided = Math.random() * (maxDivided - minDivided) + minDivided;
+    var result = Math.floor(randomDivided);
 
-    while (true) {
-        var num1 = generateRandomNumber(num1Digits);
-        var num2 = generateRandomNumber(num2Digits);
+    // console.log("Min: " + minDivided);
+    // console.log("Max: " + maxDivided);
+    // console.log("Random: " + randomDivided);
+    // console.log("Result: " + result);
+    
+    return result;
+}
 
-        if (operator == "+" || operator == "*") {
-            break;
+function quanNum(num) {
+    var num = parseInt(num);
+    var quan = 0;
+
+    while (num > 0) {
+        num = Math.floor(num / 10);
+        quan += 1;
+    }
+
+    return quan;
+}
+
+function calculationOperatorMultiply(num1, num2, operator) {
+    var computedStyleDivCal = window.getComputedStyle(divCal);
+    var widthDivCal = computedStyleDivCal.getPropertyValue('width');
+
+    var computedStyleResultInput = window.getComputedStyle(resultInput);
+    var widthResultInput = computedStyleResultInput.getPropertyValue('width');
+
+    var calculationText = num1 + '\n' + operator + ' ' + num2;
+    var newCalculation = document.createElement("div");
+    var hrElement = document.createElement("hr");
+    newCalculation.innerText = calculationText;
+    newCalculation.appendChild(hrElement);
+    calculationDiv.appendChild(newCalculation);
+
+    var quanNum2 = quanNum(num2);
+
+    if (quanNum2 > 5) {
+        divStart.style.height = "100vh";
+    }
+
+    if (quanNum2 == 1)
+        return;
+
+    index = 1;
+    while (quanNum2 > 0) {
+        var newWidth = parseInt(widthDivCal) + 11 * index;
+        divCal.style.width = newWidth + "px";
+
+        var newWidthResultInput = parseInt(widthResultInput) + 11 * index;
+        resultInput.style.width = newWidthResultInput + "px";
+
+        var divElement = document.createElement("div");
+        divElement.className = "divTichRieng"
+
+        var inpElement = document.createElement("input");
+        inpElement.type = "text";
+        inpElement.id = "tichrieng" + String(index);
+        inpElement.className = "tichrieng";
+        inpElement.placeholder = "Tích riêng " + String(index);
+        inpElement.style.marginRight = (11 * index) + "px";
+
+        if (index >= 2) {
+            var spanElement = document.createElement("span");
+            spanElement.innerText = "+ ";
+            divElement.appendChild(spanElement);
         }
 
-        if (operator == "-") {
-            if (num1 > num2) {
-                break;
-            }
-        }
+        divElement.appendChild(inpElement);
+        calculationDiv.appendChild(divElement);
+        index += 1;
+        quanNum2 -= 1;
+    }
+    calculationDiv.appendChild(document.createElement("hr"));
+}
 
-        if (operator == "/" && num2 === 1) {
-            continue;
-        }
+function calculationOperatorNormal(num1, num2, operator) {
+    var computedStyleDivCal = window.getComputedStyle(divCal);
+    var widthDivCal = computedStyleDivCal.getPropertyValue('width');
+    var computedStyleResultInput = window.getComputedStyle(resultInput);
+    var widthResultInput = computedStyleResultInput.getPropertyValue('width');
 
-        if (operator == "/") {
-            if (num1 % num2 == 0) {
-                break;
-            }
+    var quanNum1 = quanNum(num1);
+    var quanNum2 = quanNum(num2);
+
+    if (quanNum1 > 5 || quanNum2 > 5) {
+        if (quanNum1 > quanNum2) {
+            var newWidth = parseInt(widthDivCal) + 23 * (quanNum1 - 5);
+            divCal.style.width = newWidth + "px";
+
+            var newWidthResultInput = parseInt(widthResultInput) + 23 * (quanNum1 - 5);
+            resultInput.style.width = newWidthResultInput + "px";
+        } else {
+            var newWidth = parseInt(widthDivCal) + 23 * (quanNum2 - 5);
+            divCal.style.width = newWidth + "px";
+
+            var newWidthResultInput = parseInt(widthResultInput) + 23 * (quanNum2 - 5);
+            resultInput.style.width = newWidthResultInput + "px";
         }
     }
 
@@ -48,6 +128,56 @@ function generateCalculation() {
     newCalculation.innerText = calculationText;
     newCalculation.appendChild(hrElement);
     calculationDiv.appendChild(newCalculation);
+}
+
+function generateCalculation() {
+    calculationDiv.innerHTML = '';
+    divCal.style.width = "160px";
+    resultInput.style.width = "150px";
+    var num1Digits = parseInt(num1Input.value);
+    var num2Digits = parseInt(num2Input.value);
+
+    var operator = operatorSelect.value;
+
+    while (true) {
+        var num1 = generateRandomNumber(num1Digits);
+        var num2 = generateRandomNumber(num2Digits);
+
+        if (operator == "*") {
+            calculationOperatorMultiply(num1, num2, operator);
+            return;
+        } else {
+            if (operator == "+") {
+                break;
+            }
+
+            if (operator == "-") {
+                if (num1 > num2) {
+                    break;
+                }
+            }
+
+            if (operator == "/" && num2 === 1) {
+                continue;
+            }
+
+            if (operator == "/") {
+                var num = generateRandomNumberDivide(num1Digits, num2);
+                while (num === 0) {
+                    num = generateRandomNumberDivide(num1Digits, num2);                    
+                }
+
+                num1 = num2 * num;
+
+                if (quanNum(num1) != num1Digits || num1 == num2)
+                    continue;
+                break;
+            }
+        }
+    }
+
+    calculationOperatorNormal(num1, num2, operator);
+
 }
 
 document.addEventListener('keypress', function (event) {
