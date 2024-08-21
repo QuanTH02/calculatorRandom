@@ -2,10 +2,11 @@ var num1Input = document.getElementById('num1');
 var num2Input = document.getElementById('num2');
 var num3Input = document.getElementById('num3');
 var operatorSelect = document.getElementById('operator');
-var calculationDiv = document.getElementById('calculation');
+// var calculationDiv = document.getElementById('calculation');
 var divCal = document.getElementById('divCal');
-var resultInput = document.getElementById('result');
+// var resultInput = document.getElementById('result');
 var divStart = document.getElementById('start');
+var numberGen1, numberGen2, chooseOperator;
 
 function generateRandomNumber(digits) {
     var min = Math.pow(10, digits - 1);
@@ -26,7 +27,7 @@ function generateRandomNumberDivide(digits, num2) {
     // console.log("Max: " + maxDivided);
     // console.log("Random: " + randomDivided);
     // console.log("Result: " + result);
-    
+
     return result;
 }
 
@@ -42,108 +43,373 @@ function quanNum(num) {
     return quan;
 }
 
-function calculationOperatorMultiply(num1, num2, operator) {
-    var computedStyleDivCal = window.getComputedStyle(divCal);
-    var widthDivCal = computedStyleDivCal.getPropertyValue('width');
+function checkAnswerNormal(num1, num2, operator) {
 
-    var computedStyleResultInput = window.getComputedStyle(resultInput);
-    var widthResultInput = computedStyleResultInput.getPropertyValue('width');
+}
 
-    var calculationText = num1 + '\n' + operator + ' ' + num2;
-    var newCalculation = document.createElement("div");
-    var hrElement = document.createElement("hr");
-    newCalculation.innerText = calculationText;
-    newCalculation.appendChild(hrElement);
-    calculationDiv.appendChild(newCalculation);
-
+function checkAnswerMultiply(num1, num2) {
+    var quanNum1 = quanNum(num1);
     var quanNum2 = quanNum(num2);
+    var resultMulti = num1 * num2;
+    var quanResultMulti = quanNum(resultMulti);
+    var tichrieng = [];
 
-    if (quanNum2 > 5) {
-        divStart.style.height = "100vh";
+    // Tính giá trị của từng tích riêng
+    for (let i = 0; i < quanNum2; i++) {
+        var tich = num1 * Math.floor(num2 / Math.pow(10, quanNum2 - i - 1));
+        tichrieng.push(tich);
+        num2 = num2 % Math.pow(10, quanNum2 - i - 1);
     }
 
-    if (quanNum2 == 1)
-        return;
+    tichrieng.reverse();
+    tichrieng.push(resultMulti);
 
-    index = 1;
-    while (quanNum2 > 0) {
-        var newWidth = parseInt(widthDivCal) + 11 * index;
-        divCal.style.width = newWidth + "px";
+    var arrTichRieng = [];
+    for (let i = 0; i <= quanNum2; i++) {
+        arrTichRieng.push(i + 1);
+        arrTichRieng[i + 1] = [];
 
-        var newWidthResultInput = parseInt(widthResultInput) + 11 * index;
-        resultInput.style.width = newWidthResultInput + "px";
+        let numberArr = Array.from(String(tichrieng[i]), Number);
+        numberArr.reverse();
+        // console.log(numberArr);
+        let arr = new Array(quanResultMulti).fill('');
 
-        var divElement = document.createElement("div");
-        divElement.className = "divTichRieng"
+        for (let j = 1; j <= quanResultMulti; j++) {
+            if (numberArr[j - 1] != undefined) {
+                // console.log(j-1);
+                // console.log(numberArr[j-1]);
+                if (i != quanNum2) {
+                    arr[quanResultMulti - i - j] = String(numberArr[j - 1]);
+                } else {
+                    arr[j - 1] = String(numberArr[j - 1]);
+                }
+            }
 
-        var inpElement = document.createElement("input");
-        inpElement.type = "text";
-        inpElement.id = "tichrieng" + String(index);
-        inpElement.className = "tichrieng";
-        inpElement.placeholder = "Tích riêng " + String(index);
-        inpElement.style.marginRight = (11 * index) + "px";
-
-        if (index >= 2) {
-            var spanElement = document.createElement("span");
-            spanElement.innerText = "+ ";
-            divElement.appendChild(spanElement);
         }
 
-        divElement.appendChild(inpElement);
-        calculationDiv.appendChild(divElement);
-        index += 1;
-        quanNum2 -= 1;
+        arrTichRieng[i + 1] = arr;
+
+        if (i == quanNum2) {
+            arrTichRieng[i + 1].reverse();
+        }
     }
-    calculationDiv.appendChild(document.createElement("hr"));
+    // console.log(arrTichRieng);
+
+    // 
+    var arrTichRiengInp = [];
+    if (quanNum2 > 1) {
+        for (let i = 1; i <= quanNum2 + 1; i++) {
+            arrTichRiengInp.push(i);
+            arrTichRiengInp[i] = [];
+            for (let j = quanResultMulti; j >= 1; j--) {
+                // console.log(document.getElementById('inp_line_' + i + '_' + j).value);
+                arrTichRiengInp[i].push(document.getElementById('inp_line_' + i + '_' + j).value);
+            }
+        }
+    } else {
+        for (let i = 1; i <= quanNum2; i++) {
+            arrTichRiengInp.push(i);
+            arrTichRiengInp[i] = [];
+            for (let j = 1; j <= quanResultMulti; j++) {
+                // console.log(document.getElementById('inp_line_' + i + '_' + j).value);
+                arrTichRiengInp[i].push(document.getElementById('inp_line_' + i + '_' + j).value);
+            }
+        }
+    }
+
+
+    for (let i = 1; i <= quanNum2 + 1; i++) {
+        if (JSON.stringify(arrTichRieng[i]) != JSON.stringify(arrTichRiengInp[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+function calculationOperatorMultiply(num1, num2, operator) {
+    var quanNum1 = quanNum(num1);
+    var quanNum2 = quanNum(num2);
+    var resultMulti = num1 * num2;
+    var quanResultMulti = quanNum(resultMulti);
+    var number1 = num1;
+    var number2 = num2;
+
+    // Tạo phần tử div bao ngoài
+    const divTableMulti = document.createElement('div');
+    divTableMulti.className = 'divTableMulti';
+
+    // Tạo phần tử table
+    const table = document.createElement('table');
+    // table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    divTableMulti.appendChild(table);
+
+    // Tạo hàng đầu tiên
+    let tr = document.createElement('tr');
+    let th = document.createElement('th');
+    th.setAttribute('rowspan', 2);
+    th.textContent = 'x';
+    tr.appendChild(th);
+
+    for (let i = 0; i < quanResultMulti - quanNum1; i++) {
+        th = document.createElement('th');
+        tr.appendChild(th);
+    }
+
+    for (let i = 0; i < quanNum1; i++) {
+        th = document.createElement('th');
+        th.textContent = Math.floor(num1 / Math.pow(10, quanNum1 - i - 1));
+        num1 = num1 % Math.pow(10, quanNum1 - i - 1);
+        tr.appendChild(th);
+    }
+
+    table.appendChild(tr);
+
+    // Tạo hàng thứ hai với class border_bot_multi
+    tr = document.createElement('tr');
+    tr.className = 'border_bot_multi';
+
+    for (let i = 0; i < quanResultMulti - quanNum2; i++) {
+        th = document.createElement('th');
+        if (quanNum2 > 1) {
+            th.style.borderBottom = '2px solid black';
+        }
+        tr.appendChild(th);
+    }
+
+    for (let i = 0; i < quanNum2; i++) {
+        th = document.createElement('th');
+        th.textContent = Math.floor(num2 / Math.pow(10, quanNum2 - i - 1));
+        num2 = num2 % Math.pow(10, quanNum2 - i - 1);
+        if (quanNum2 > 1) {
+            th.style.borderBottom = '2px solid black';
+        }
+        tr.appendChild(th);
+    }
+
+    table.appendChild(tr);
+
+    // Tạo hàng trống với height 5px
+    tr = document.createElement('tr');
+    let td = document.createElement('td');
+    td.style.height = '5px';
+    tr.appendChild(td);
+    table.appendChild(tr);
+
+
+    // ***************************************************************************************
+    // ***************************************************************************************
+    // ***************************************************************************************
+    // Tích riêng
+    var idInputTichRieng = 1;
+    var quanNum2Copy = quanNum2;
+    if (quanNum2Copy > 1) {
+        // Tạo hàng với dấu cộng và các ô input
+        tr = document.createElement('tr');
+        td = document.createElement('td');
+        td.setAttribute('rowspan', quanNum2Copy * 2 - 1);
+        td.textContent = '+';
+        tr.appendChild(td);
+
+        for (let i = 0; i < quanResultMulti; i++) {
+            td = document.createElement('td');
+            const input = document.createElement('input');
+            input.className = 'inp_on_table';
+            input.type = 'text';
+            input.id = 'inp_line_' + idInputTichRieng + '_' + (quanResultMulti - i);
+            input.maxLength = 1;
+            td.appendChild(input);
+            tr.appendChild(td);
+        }
+        idInputTichRieng += 1;
+        table.appendChild(tr);
+
+        while (quanNum2Copy > 1) {
+            // Tạo hàng trống thứ hai với height 5px
+            tr = document.createElement('tr');
+            td = document.createElement('td');
+            td.style.height = '5px';
+            tr.appendChild(td);
+            table.appendChild(tr);
+
+            // Tạo hàng với các ô input khác
+            tr = document.createElement('tr');
+
+            for (let i = 0; i < quanResultMulti; i++) {
+                td = document.createElement('td');
+                const input = document.createElement('input');
+                input.className = 'inp_on_table';
+                input.type = 'text';
+                input.id = 'inp_line_' + idInputTichRieng + '_' + (quanResultMulti - i);
+                input.maxLength = 1;
+                td.appendChild(input);
+                tr.appendChild(td);
+            }
+            idInputTichRieng += 1;
+            table.appendChild(tr);
+            quanNum2Copy -= 1;
+        }
+    }
+
+    // ***************************************************************************************
+    // ***************************************************************************************
+    // ***************************************************************************************
+    // Kết quả
+    // Tạo hàng với các ô có class td_border_bot_multi
+    tr = document.createElement('tr');
+    td = document.createElement('td');
+    td.setAttribute('rowspan', 3);
+    tr.appendChild(td);
+
+    for (let i = 0; i < quanResultMulti; i++) {
+        td = document.createElement('td');
+        td.className = 'td_border_bot_multi';
+        tr.appendChild(td);
+    }
+
+    table.appendChild(tr);
+
+    // Tạo hàng trống cuối cùng với height 5px
+    tr = document.createElement('tr');
+    td = document.createElement('td');
+    td.style.height = '5px';
+    tr.appendChild(td);
+    table.appendChild(tr);
+
+    // Tạo hàng với các ô input khác và class inp_on_table1
+    tr = document.createElement('tr');
+
+    for (let i = 0; i < quanResultMulti; i++) {
+        td = document.createElement('td');
+        const input = document.createElement('input');
+        input.className = 'inp_on_table1';
+        input.type = 'text';
+        input.id = 'inp_line_' + idInputTichRieng + '_' + (quanResultMulti - i);
+        input.maxLength = 1;
+        td.appendChild(input);
+        tr.appendChild(td);
+    }
+
+    table.appendChild(tr);
+
+    document.getElementById("divTableMulti").innerHTML = '';
+    document.getElementById("divTableMulti").appendChild(divTableMulti);
+
+    if (quanNum2 > 1) {
+        document.addEventListener('input', function (event) {
+            var thisId = event.target.id;
+            var numEnd = parseInt(thisId.charAt(thisId.length - 1));
+
+            if (thisId.includes('inp_line_')) {
+                if (event.inputType !== 'deleteContentBackward' && event.inputType !== 'deleteContentForward') {
+                    if (numEnd !== quanResultMulti) {
+                        document.getElementById(thisId.slice(0, -1) + (numEnd + 1)).focus();
+                    }
+                }
+            }
+        });
+    }
+
+
+    document.addEventListener('keydown', function (event) {
+        if (event.code === 'Space') {
+            checkAnswerMultiply(number1, number2);
+        }
+    });
 }
 
 function calculationOperatorNormal(num1, num2, operator) {
-    var computedStyleDivCal = window.getComputedStyle(divCal);
-    var widthDivCal = computedStyleDivCal.getPropertyValue('width');
-    var computedStyleResultInput = window.getComputedStyle(resultInput);
-    var widthResultInput = computedStyleResultInput.getPropertyValue('width');
+    // Tạo phần tử div bao ngoài
+    const divTableMulti = document.createElement('div');
+    divTableMulti.className = 'divTableMulti';
+    divTableMulti.style.marginTop = "5%";
 
-    var quanNum1 = quanNum(num1);
-    var quanNum2 = quanNum(num2);
+    // Tạo phần tử table
+    const table = document.createElement('table');
+    // table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.className = 'table_normal';
+    divTableMulti.appendChild(table);
 
-    if (quanNum1 > 5 || quanNum2 > 5) {
-        if (quanNum1 > quanNum2) {
-            var newWidth = parseInt(widthDivCal) + 23 * (quanNum1 - 5);
-            divCal.style.width = newWidth + "px";
+    // Tạo hàng đầu tiên
+    let tr = document.createElement('tr');
+    let th = document.createElement('th');
+    th.setAttribute('rowspan', 2);
+    th.textContent = '+';
+    tr.appendChild(th);
 
-            var newWidthResultInput = parseInt(widthResultInput) + 23 * (quanNum1 - 5);
-            resultInput.style.width = newWidthResultInput + "px";
-        } else {
-            var newWidth = parseInt(widthDivCal) + 23 * (quanNum2 - 5);
-            divCal.style.width = newWidth + "px";
+    th = document.createElement('th');
+    th.textContent = num1;
 
-            var newWidthResultInput = parseInt(widthResultInput) + 23 * (quanNum2 - 5);
-            resultInput.style.width = newWidthResultInput + "px";
-        }
-    }
 
-    var calculationText = num1 + '\n' + operator + ' ' + num2;
-    var newCalculation = document.createElement("div");
-    var hrElement = document.createElement("hr");
-    newCalculation.innerText = calculationText;
-    newCalculation.appendChild(hrElement);
-    calculationDiv.appendChild(newCalculation);
+    tr.appendChild(th);
+
+    table.appendChild(tr);
+
+    // Tạo hàng thứ hai với class border_bot_multi
+    tr = document.createElement('tr');
+    tr.className = 'border_bot_multi';
+
+
+    th = document.createElement('th');
+    th.textContent = num2;
+    th.style.borderBottom = '2px solid black';
+
+    tr.appendChild(th);
+
+    table.appendChild(tr);
+
+    // Tạo hàng trống với height 5px
+    tr = document.createElement('tr');
+    let td = document.createElement('td');
+    td.style.height = '5px';
+
+    tr.appendChild(td);
+    table.appendChild(tr);
+
+    // document.getElementById("divTableMulti").innerHTML = '';
+    document.getElementById("divTableMulti").appendChild(divTableMulti);
+
+    var doDaiGachChan = table.offsetWidth;
+
+    // Kết quả
+    tr = document.createElement('tr');
+    tr.appendChild(td);
+    td = document.createElement('td');
+
+    const input = document.createElement('input');
+    input.className = 'inp_on_table_normal';
+    input.type = 'text';
+    input.id = 'result';
+    input.style.width = doDaiGachChan + 'px';
+
+    // console.log(doDaiGachChan);
+
+    td.appendChild(input);
+    tr.appendChild(td);
+    table.appendChild(tr);
 }
 
 function generateCalculation() {
-    calculationDiv.innerHTML = '';
-    divCal.style.width = "160px";
-    resultInput.style.width = "150px";
+    // calculationDiv.innerHTML = '';
+    // divCal.style.width = "160px";
+    // resultInput.style.width = "150px";
     var num1Digits = parseInt(num1Input.value);
     var num2Digits = parseInt(num2Input.value);
 
     var operator = operatorSelect.value;
 
+    chooseOperator = operator;
+
     while (true) {
         var num1 = generateRandomNumber(num1Digits);
         var num2 = generateRandomNumber(num2Digits);
 
+        numberGen1 = num1;
+        numberGen2 = num2;
+
         if (operator == "*") {
+            // document.getElementById("calcu").style.display = 'none';
             calculationOperatorMultiply(num1, num2, operator);
             return;
         } else {
@@ -164,7 +430,7 @@ function generateCalculation() {
             if (operator == "/") {
                 var num = generateRandomNumberDivide(num1Digits, num2);
                 while (num === 0) {
-                    num = generateRandomNumberDivide(num1Digits, num2);                    
+                    num = generateRandomNumberDivide(num1Digits, num2);
                 }
 
                 num1 = num2 * num;
@@ -175,8 +441,9 @@ function generateCalculation() {
             }
         }
     }
-
+    document.getElementById("divTableMulti").innerHTML = '';
     calculationOperatorNormal(num1, num2, operator);
+    // document.getElementById("calcu").style.display = 'block';
 
 }
 
@@ -207,18 +474,27 @@ function showPopup(id) {
 }
 
 function checkAnswer() {
-    var result = parseInt(document.getElementById('result').value);
-    var num1 = parseInt(calculationDiv.innerText.split('\n')[0]);
-    var num2 = parseInt(calculationDiv.innerText.split('\n')[1].split(' ')[1]);
-    var operator = calculationDiv.innerText.split('\n')[1].split(' ')[0];
-    var correctAnswer = eval(num1 + operator + num2);
+    // var result = parseInt(document.getElementById('result').value);
+    var correctAnswer = eval(numberGen1 + chooseOperator + numberGen2);
 
-    if (result === correctAnswer) {
-        showPopup("popup-correct");
-        incrementCorrectScore();
+    if (chooseOperator == "+" || chooseOperator == "-" || chooseOperator == "/") {
+        if (result === correctAnswer) {
+            showPopup("popup-correct");
+            incrementCorrectScore();
+        } else {
+            showPopup("popup-incorrect");
+            incrementIncorrectScore();
+        }
     } else {
-        showPopup("popup-incorrect");
-        incrementIncorrectScore();
+        var checkMulti = checkAnswerMultiply(numberGen1, numberGen2);
+
+        if (checkMulti === 1) {
+            showPopup("popup-correct");
+            incrementCorrectScore();
+        } else {
+            showPopup("popup-incorrect");
+            incrementIncorrectScore();
+        }
     }
 
     var num3Digits = document.getElementById('socau').innerText;
@@ -231,7 +507,7 @@ function checkAnswer() {
     } else {
         document.getElementById('socau').innerText = socau + "/" + num3Digits.split('/')[1];
         generateCalculation();
-        document.getElementById('result').value = '';
+        // document.getElementById('result').value = '';
     }
 }
 
@@ -272,9 +548,13 @@ function start() {
     }
 
     generateCalculation();
-    document.getElementById('result').value = '';
+    // if (document.getElementById('result').value)
+    //     document.getElementById('result').value = '';
     document.getElementById('scoreboardId').style.display = 'block';
     document.getElementById('options').style.display = 'none';
     document.getElementById('start').style.display = 'block';
     document.getElementById('socau').innerText = "1/" + num3Digits;
 }
+
+//Test
+generateCalculation();
