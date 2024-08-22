@@ -6,7 +6,7 @@ var operatorSelect = document.getElementById('operator');
 var divCal = document.getElementById('divCal');
 // var resultInput = document.getElementById('result');
 var divStart = document.getElementById('start');
-var numberGen1, numberGen2, chooseOperator;
+var numberGen1, numberGen2, chooseOperator, numOfCalDivision;
 
 function generateRandomNumber(digits) {
     var min = Math.pow(10, digits - 1);
@@ -33,6 +33,11 @@ function generateRandomNumberDivide(digits, num2) {
 
 function quanNum(num) {
     var num = parseInt(num);
+
+    if (num == 0) {
+        return 1;
+    }
+
     var quan = 0;
 
     while (num > 0) {
@@ -43,8 +48,61 @@ function quanNum(num) {
     return quan;
 }
 
-function checkAnswerDivision(num1, num2) {
+function isArrayEmpty(arr) {
+    return arr.every(element => element === undefined || element === null || element === '');
+}
 
+function checkAnswerDivision(num1, num2) {
+    var arrAnwer = returnArrLineAnwerDivision(num1, num2);
+    var answerDivision = num1 / num2;
+    var quanAnswerDivision = quanNum(answerDivision);
+    var quanNum1 = quanNum(num1);
+    var arrInp = [];
+
+    // console.log(numOfCalDivision);
+    arrInp[0] = [];
+    for (let i = 0; i < quanAnswerDivision; i++) {
+        if (document.getElementById('inp_division_line_' + 0 + '_' + i).value != undefined) {
+            arrInp[0].push(document.getElementById('inp_division_line_' + 0 + '_' + i).value);
+        }
+    }
+
+    for (let i = 1; i <= numOfCalDivision; i++) {
+        arrInp[i] = [];
+        for (let j = 0; j < quanNum1; j++) {
+            if (document.getElementById('inp_division_line_' + i + '_' + j).value != undefined) {
+                arrInp[i].push(document.getElementById('inp_division_line_' + i + '_' + j).value);
+            }
+        }
+    }
+
+    // console.log(arrInp);
+    // console.log(arrAnwer);
+
+    // console.log(arrInp.length);
+    // console.log(arrAnwer.length);
+
+    if (JSON.stringify(arrInp[0]) != JSON.stringify(arrAnwer[0]))
+        return 0;
+
+    for (let i = 1; i <= numOfCalDivision; i++) {
+        if (isArrayEmpty(arrInp[i])) {
+            continue;
+        }
+        for (let j = 0; j < arrAnwer.length; j++) {
+            if (JSON.stringify(arrInp[i]) == JSON.stringify(arrAnwer[j])) {
+                // console.log(arrInp[i]);
+                // console.log(arrAnwer[j]);
+                break
+            }
+
+            if (j == arrAnwer.length - 1) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
 }
 
 function checkAnswerMultiply(num1, num2) {
@@ -92,10 +150,14 @@ function checkAnswerMultiply(num1, num2) {
         if (i == quanNum2) {
             arrTichRieng[i + 1].reverse();
         }
+
+        if (quanNum2 == 1) {
+            // arrTichRieng[i + 1].reverse
+            break;
+        }
     }
     // console.log(arrTichRieng);
 
-    // 
     var arrTichRiengInp = [];
     if (quanNum2 > 1) {
         for (let i = 1; i <= quanNum2 + 1; i++) {
@@ -114,9 +176,12 @@ function checkAnswerMultiply(num1, num2) {
                 // console.log(document.getElementById('inp_line_' + i + '_' + j).value);
                 arrTichRiengInp[i].push(document.getElementById('inp_line_' + i + '_' + j).value);
             }
+            arrTichRiengInp[i].reverse();
         }
     }
 
+    console.log(arrTichRieng);
+    console.log(arrTichRiengInp);
 
     for (let i = 1; i <= quanNum2 + 1; i++) {
         if (JSON.stringify(arrTichRieng[i]) != JSON.stringify(arrTichRiengInp[i])) {
@@ -218,6 +283,7 @@ function calculationOperatorMultiply(num1, num2, operator) {
             input.type = 'text';
             input.id = 'inp_line_' + idInputTichRieng + '_' + (quanResultMulti - i);
             input.maxLength = 1;
+            input.autocomplete = 'off';
             td.appendChild(input);
             tr.appendChild(td);
         }
@@ -242,6 +308,7 @@ function calculationOperatorMultiply(num1, num2, operator) {
                 input.type = 'text';
                 input.id = 'inp_line_' + idInputTichRieng + '_' + (quanResultMulti - i);
                 input.maxLength = 1;
+                input.autocomplete = 'off';
                 td.appendChild(input);
                 tr.appendChild(td);
             }
@@ -286,6 +353,7 @@ function calculationOperatorMultiply(num1, num2, operator) {
         input.type = 'text';
         input.id = 'inp_line_' + idInputTichRieng + '_' + (quanResultMulti - i);
         input.maxLength = 1;
+        input.autocomplete = 'off';
         td.appendChild(input);
         tr.appendChild(td);
     }
@@ -295,21 +363,26 @@ function calculationOperatorMultiply(num1, num2, operator) {
     document.getElementById("divTableMulti").innerHTML = '';
     document.getElementById("divTableMulti").appendChild(divTableMulti);
 
-    if (quanNum2 > 1) {
-        document.addEventListener('input', function (event) {
-            var thisId = event.target.id;
-            var numEnd = parseInt(thisId.charAt(thisId.length - 1));
+    function handleInput(event) {
+        var thisId = event.target.id;
+        var numEnd = parseInt(thisId.charAt(thisId.length - 1));
 
-            if (thisId.includes('inp_line_')) {
-                if (event.inputType !== 'deleteContentBackward' && event.inputType !== 'deleteContentForward') {
-                    if (numEnd !== quanResultMulti) {
-                        document.getElementById(thisId.slice(0, -1) + (numEnd + 1)).focus();
-                    }
+        if (thisId.includes('inp_line_')) {
+            if (event.inputType !== 'deleteContentBackward' && event.inputType !== 'deleteContentForward') {
+                if (numEnd !== quanResultMulti) {
+                    document.getElementById(thisId.slice(0, -1) + (numEnd + 1)).focus();
                 }
             }
-        });
+        }
     }
 
+    console.log(quanNum2);
+
+    if (quanNum2 > 1) {
+        document.addEventListener('input', handleInput);
+    } else {
+        document.removeEventListener('input', handleInput);
+    }
 
     document.addEventListener('keydown', function (event) {
         if (event.code === 'Space') {
@@ -342,24 +415,27 @@ function returnArrLineAnwerDivision(num1, num2) {
 
     var indexCheck = arrCheckNum1.length;
 
+    // console.log(num1)
+
     // console.log(arrCheckNum1);
     // console.log(arrNum1);
     var i = 1;
     while (true) {
-
-
         var thuong = Math.floor(checkNum1 / num2);
-        arrLineAnwer[0].push(thuong);
+        // console.log(checkNum1);
+        arrLineAnwer[0].push(String(thuong));
 
         var arrLine = new Array(quanNum1).fill('');
         var tich1So = thuong * num2;
-        var arrTich1So = Array.from(String(tich1So), Number);
+        var arrTich1So = Array.from(String(tich1So));
         var quanTich1So = quanNum(tich1So);
+
+        // console.log(arrTich1So);
 
         var copyIndexCheck = indexCheck;
         for (let j = 0; j < quanTich1So; j++) {
             if (arrTich1So[quanTich1So - j - 1] != undefined) {
-                arrLine[copyIndexCheck - 1] = String(arrTich1So[quanTich1So - j - 1]);
+                arrLine[copyIndexCheck - 1] = arrTich1So[quanTich1So - j - 1];
                 copyIndexCheck -= 1;
             }
         }
@@ -374,16 +450,23 @@ function returnArrLineAnwerDivision(num1, num2) {
 
         indexCheck += 1;
         i += 1;
-
-
+        var arrLine = new Array(quanNum1).fill('');
 
         checkNum1 = checkNum1 - thuong * num2;
-        console.log(checkNum1);
 
+        if (checkNum1 == 0) {
+            var arrCheckNum1 = Array.from(String(checkNum1));
+            arrCheckNum1.push(String(arrNum1[indexCheck - 1]));
+            var quanCheckNum1 = 2;
+            checkNum1 = checkNum1 * 10 + arrNum1[indexCheck - 1];
+        } else {
+            checkNum1 = checkNum1 * 10 + arrNum1[indexCheck - 1];
+            var arrCheckNum1 = Array.from(String(checkNum1));
+            var quanCheckNum1 = quanNum(checkNum1);
 
+        }
 
-
-        checkNum1 = checkNum1 * 10 + arrNum1[indexCheck - 1];
+        // console.log(arrCheckNum1);
 
         if (indexCheck > arrNum1.length) {
             var arrLine = new Array(quanNum1).fill('');
@@ -392,14 +475,26 @@ function returnArrLineAnwerDivision(num1, num2) {
             break;
         }
 
-        var arrLine = new Array(quanNum1).fill('');
-        var arrCheckNum1 = Array.from(String(checkNum1), Number);
-        var quanCheckNum1 = quanNum(checkNum1);
+        // checkNum1 = checkNum1 - thuong * num2;
+        // // console.log(checkNum1);
+
+        // checkNum1 = checkNum1 * 10 + arrNum1[indexCheck - 1];
+        // // console.log(checkNum1);
+
+        // if (indexCheck > arrNum1.length) {
+        //     var arrLine = new Array(quanNum1).fill('');
+        //     arrLine[quanNum1 - 1] = '0';
+        //     arrLineAnwer[i] = arrLine;
+        //     break;
+        // }
+
+        // var arrCheckNum1 = Array.from(String(checkNum1));
+        // var quanCheckNum1 = quanNum(checkNum1);
 
         var copyIndexCheck = indexCheck;
         for (let j = 0; j < quanCheckNum1; j++) {
             if (arrCheckNum1[quanCheckNum1 - j - 1] != undefined) {
-                arrLine[copyIndexCheck - 1] = String(arrCheckNum1[quanCheckNum1 - j - 1]);
+                arrLine[copyIndexCheck - 1] = arrCheckNum1[quanCheckNum1 - j - 1];
                 copyIndexCheck -= 1;
             }
         }
@@ -411,10 +506,15 @@ function returnArrLineAnwerDivision(num1, num2) {
         i += 1;
     }
 
-    console.log(arrLineAnwer);
+    // console.log(arrLineAnwer);
+    return arrLineAnwer;
 }
 
 function calculationOperatorDivision(num1, num2) {
+    numberGen1 = num1;
+    numberGen2 = num2;
+
+    numOfCalDivision = 0;
     var quanNum1 = quanNum(num1);
     var quanNum2 = quanNum(num2);
     var resultDivision = num1 / num2;
@@ -486,10 +586,14 @@ function calculationOperatorDivision(num1, num2) {
         td = document.createElement('td');
         const input = document.createElement('input');
         input.className = 'inp_on_table';
+        input.id = 'inp_division_line_' + 1 + '_' + (i);
         input.type = 'text';
+        input.maxLength = 1;
+        input.autocomplete = 'off';
         td.appendChild(input);
         tr.appendChild(td);
     }
+    numOfCalDivision += 1;
 
     th = document.createElement('th');
     th.className = 'td_border_right_multi';
@@ -502,15 +606,19 @@ function calculationOperatorDivision(num1, num2) {
     th.rowSpan = 2 * quanNum1 + 1;
     tr.appendChild(th);
 
-    for (let i = 0; i < quanNum2; i++) {
+    var idDivision = 2;
+    for (let i = 0; i < quanNum1; i++) {
         td = document.createElement('td');
         if (i >= quanResultDivision) {
-            console.log(document.getElementById("width_exp").offsetWidth);
-            td.style.width = document.getElementById("width_exp").offsetWidth + 'px';
+            // console.log(document.getElementById("width_exp").offsetWidth);
+            td.style.width = 46 + 'px';
         } else {
             const input = document.createElement('input');
             input.className = 'inp_on_table';
+            input.id = 'inp_division_line_' + 0 + '_' + (i);
             input.type = 'text';
+            input.maxLength = 1;
+            input.autocomplete = 'off';
             td.appendChild(input);
         }
 
@@ -528,28 +636,33 @@ function calculationOperatorDivision(num1, num2) {
 
     for (let k = 0; k < quanResultDivision - 1; k++) {
         // Tạo các hàng tiếp theo với các ô input
-            tr = document.createElement('tr');
-            for (let j = 0; j < quanNum1; j++) {
-                td = document.createElement('td');
-                const input = document.createElement('input');
-                input.className = 'inp_on_table';
-                input.type = 'text';
-                td.appendChild(input);
-                tr.appendChild(td);
-            }
-            table.appendChild(tr);
-
-            tr = document.createElement('tr');
+        tr = document.createElement('tr');
+        for (let j = 0; j < quanNum1; j++) {
             td = document.createElement('td');
-            td.style.height = '5px';
+            const input = document.createElement('input');
+            input.className = 'inp_on_table';
+            input.id = 'inp_division_line_' + idDivision + '_' + (j);
+            input.type = 'text';
+            input.maxLength = 1;
+            input.autocomplete = 'off';
+            td.appendChild(input);
             tr.appendChild(td);
-            table.appendChild(tr);
-        
+        }
+        numOfCalDivision += 1;
+        table.appendChild(tr);
+
+        tr = document.createElement('tr');
+        td = document.createElement('td');
+        td.style.height = '5px';
+        tr.appendChild(td);
+        table.appendChild(tr);
+        idDivision += 1;
     }
 
     // Tạo hàng cuối với nút bấm
     tr = document.createElement('tr');
-    for (let i = 0; i < 5; i++) {
+    tr.id = 'tr_addRowTable';
+    for (let i = 0; i < quanNum1 - 2; i++) {
         td = document.createElement('td');
         tr.appendChild(td);
     }
@@ -565,7 +678,51 @@ function calculationOperatorDivision(num1, num2) {
     table.appendChild(tr);
 
     // Thêm bảng vào phần tử div với id="divTableMulti"
+
+    document.getElementById("divTableMulti").innerHTML = '';
     document.getElementById('divTableMulti').appendChild(divTableMulti);
+
+    document.getElementById('addRowTable').addEventListener('click', function () {
+        var trAddRow = document.getElementById('tr_addRowTable');
+
+
+
+        var newRow = document.createElement('tr');
+        for (let i = 0; i < quanNum1; i++) {
+            var td = document.createElement('td');
+            var input = document.createElement('input');
+            input.className = 'inp_on_table';
+            input.id = 'inp_division_line_' + idDivision + '_' + i;
+            input.type = 'text';
+            td.appendChild(input);
+            newRow.appendChild(td);
+        }
+        trAddRow.parentNode.insertBefore(newRow, trAddRow);
+
+        var newRowHeight = document.createElement('tr');
+        newRowHeight.innerHTML = `
+            <td style="height: 5px;"></td>
+        `;
+
+        trAddRow.parentNode.insertBefore(newRowHeight, trAddRow);
+    });
+
+    // checkAnswerDivision(number1, number2);
+
+    function handleInputDivision(event) {
+        var thisId = event.target.id;
+        var numEnd = parseInt(thisId.charAt(thisId.length - 1));
+
+        if (thisId.includes('inp_division_line_')) {
+            if (event.inputType !== 'deleteContentBackward' && event.inputType !== 'deleteContentForward') {
+                if (numEnd !== quanNum1) {
+                    document.getElementById(thisId.slice(0, -1) + (numEnd + 1)).focus();
+                }
+            }
+        }
+    }
+
+    document.addEventListener('input', handleInputDivision);
 
 }
 
@@ -665,11 +822,11 @@ function generateCalculation() {
         var num1 = generateRandomNumber(num1Digits);
         var num2 = generateRandomNumber(num2Digits);
 
-
-
         if (operator == "*") {
             // document.getElementById("calcu").style.display = 'none';
             calculationOperatorMultiply(num1, num2, operator);
+            numberGen1 = num1;
+            numberGen2 = num2;
             return;
         } else {
             if (operator == "+") {
@@ -696,13 +853,15 @@ function generateCalculation() {
 
                 if (quanNum(num1) != num1Digits || num1 == num2)
                     continue;
-                break;
+                calculationOperatorDivision(num1, num2);
+                // calculationOperatorDivision(7280, 8);
+                return;
             }
         }
     }
     numberGen1 = num1;
     numberGen2 = num2;
-    // document.getElementById("divTableMulti").innerHTML = '';
+    document.getElementById("divTableMulti").innerHTML = '';
     calculationOperatorNormal(num1, num2, operator);
     // document.getElementById("calcu").style.display = 'block';
 
@@ -735,7 +894,7 @@ function showPopup(id) {
 }
 
 function checkAnswer() {
-    if (chooseOperator == "+" || chooseOperator == "-" || chooseOperator == "/") {
+    if (chooseOperator == "+" || chooseOperator == "-") {
         var result = parseInt(document.getElementById('result').value);
         var correctAnswer = eval(numberGen1 + chooseOperator + numberGen2);
 
@@ -752,10 +911,22 @@ function checkAnswer() {
             // console.log("Your answer: " + result);
             incrementIncorrectScore();
         }
-    } else {
+    } else if (chooseOperator == "*") {
+        // console.log(numberGen1);
+        // console.log(numberGen2);
         var checkMulti = checkAnswerMultiply(numberGen1, numberGen2);
 
         if (checkMulti === 1) {
+            showPopup("popup-correct");
+            incrementCorrectScore();
+        } else {
+            showPopup("popup-incorrect");
+            incrementIncorrectScore();
+        }
+    } else {
+        var checkDivision = checkAnswerDivision(numberGen1, numberGen2);
+
+        if (checkDivision === 1) {
             showPopup("popup-correct");
             incrementCorrectScore();
         } else {
@@ -824,30 +995,7 @@ function start() {
 }
 
 //Test
-generateCalculation();
+// generateCalculation();
 
-document.getElementById('addRowTable').addEventListener('click', function () {
-    var trAddRow = document.getElementById('tr_addRowTable');
 
-    var newRowHeight = document.createElement('tr');
-    newRowHeight.innerHTML = `
-        <td style="height: 5px;"></td>
-    `;
-
-    trAddRow.parentNode.insertBefore(newRowHeight, trAddRow);
-
-    var newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td><input class="inp_on_table" type="text"></td>
-        <td><input class="inp_on_table" type="text"></td>
-        <td><input class="inp_on_table" type="text"></td>
-        <td><input class="inp_on_table" type="text"></td>
-        <td><input class="inp_on_table" type="text"></td>
-        <td><input class="inp_on_table" type="text"></td>
-        <td><input class="inp_on_table" type="text"></td>
-    `;
-    trAddRow.parentNode.insertBefore(newRow, trAddRow);
-
-    calculationOperatorDivision(1206156, 3486);
-});
 
