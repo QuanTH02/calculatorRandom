@@ -79,8 +79,8 @@ function checkAnswerDivision(num1, num2) {
         }
     }
 
-    // console.log(arrInp);
-    // console.log(arrAnwer);
+    console.log(arrInp);
+    console.log(arrAnwer);
 
     // console.log(arrInp.length);
     // console.log(arrAnwer.length);
@@ -723,8 +723,6 @@ function calculationOperatorDivision(num1, num2) {
     document.getElementById('addRowTable').addEventListener('click', function () {
         var trAddRow = document.getElementById('tr_addRowTable');
 
-
-
         var newRow = document.createElement('tr');
         for (let i = 0; i < quanNum1; i++) {
             var td = document.createElement('td');
@@ -736,6 +734,7 @@ function calculationOperatorDivision(num1, num2) {
             input.autocomplete = 'off';
             td.appendChild(input);
             newRow.appendChild(td);
+            
         }
         trAddRow.parentNode.insertBefore(newRow, trAddRow);
 
@@ -745,6 +744,7 @@ function calculationOperatorDivision(num1, num2) {
         `;
 
         trAddRow.parentNode.insertBefore(newRowHeight, trAddRow);
+        idDivision += 1;
     });
 
     // checkAnswerDivision(number1, number2);
@@ -756,7 +756,7 @@ function calculationOperatorDivision(num1, num2) {
         if (thisId.includes('inp_division_line_')) {
             if (event.inputType !== 'deleteContentBackward' && event.inputType !== 'deleteContentForward') {
                 if (numEnd !== quanNum1) {
-                    document.getElementById(thisId.slice(0, -1) + (numEnd + 1)).focus();
+                    document.getElementById(thisId.slice(0, -1) + (numEnd - 1)).focus();
                 }
             }
         }
