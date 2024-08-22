@@ -27,6 +27,9 @@ function generateRandomNumberDivide(digits, num2) {
     // console.log("Max: " + maxDivided);
     // console.log("Random: " + randomDivided);
     // console.log("Result: " + result);
+    // console.log("Num2: " + num2);
+
+    if (result === 0) return 1;
 
     return result;
 }
@@ -180,8 +183,8 @@ function checkAnswerMultiply(num1, num2) {
         }
     }
 
-    console.log(arrTichRieng);
-    console.log(arrTichRiengInp);
+    // console.log(arrTichRieng);
+    // console.log(arrTichRiengInp);
 
     for (let i = 1; i <= quanNum2 + 1; i++) {
         if (JSON.stringify(arrTichRieng[i]) != JSON.stringify(arrTichRiengInp[i])) {
@@ -376,17 +379,52 @@ function calculationOperatorMultiply(num1, num2, operator) {
         }
     }
 
-    console.log(quanNum2);
+    // console.log(quanNum2);
 
     if (quanNum2 > 1) {
         document.addEventListener('input', handleInput);
+        document.getElementById("inp_line_1_1").focus();
     } else {
         document.removeEventListener('input', handleInput);
+        document.getElementById("inp_line_1_" + quanResultMulti).focus();
     }
 
     document.addEventListener('keydown', function (event) {
-        if (event.code === 'Space') {
-            checkAnswerMultiply(number1, number2);
+        var thisEventId = event.target.id;
+
+        if (thisEventId.length >= 12) { // Đảm bảo rằng chuỗi ID có ít nhất 12 ký tự
+            var newEventId;
+            var newElement;
+
+            switch (event.code) {
+                case 'ArrowDown':
+                    var newDownChar = String(parseInt(thisEventId[9]) + 1);
+                    newEventId = thisEventId.substring(0, 9) + newDownChar + thisEventId.substring(10);
+                    break;
+
+                case 'ArrowUp':
+                    var newUpChar = String(Math.max(0, parseInt(thisEventId[9]) - 1)); // Đảm bảo ký tự không âm
+                    newEventId = thisEventId.substring(0, 9) + newUpChar + thisEventId.substring(10);
+                    break;
+
+                case 'ArrowLeft':
+                    var newLeftChar = String(parseInt(thisEventId[11]) + 1);
+                    newEventId = thisEventId.substring(0, 11) + newLeftChar + thisEventId.substring(12);
+                    break;
+
+                case 'ArrowRight':
+                    var newRightChar = String(Math.max(0, parseInt(thisEventId[11]) - 1)); // Đảm bảo ký tự không âm
+                    newEventId = thisEventId.substring(0, 11) + newRightChar + thisEventId.substring(12);
+                    break;
+
+                default:
+                    return; // Không xử lý các phím khác
+            }
+
+            newElement = document.getElementById(newEventId);
+            if (newElement) {
+                newElement.focus(); // Chuyển tiêu điểm đến phần tử mới
+            }
         }
     });
 }
@@ -694,6 +732,8 @@ function calculationOperatorDivision(num1, num2) {
             input.className = 'inp_on_table';
             input.id = 'inp_division_line_' + idDivision + '_' + i;
             input.type = 'text';
+            input.maxLength = 1;
+            input.autocomplete = 'off';
             td.appendChild(input);
             newRow.appendChild(td);
         }
@@ -723,6 +763,46 @@ function calculationOperatorDivision(num1, num2) {
     }
 
     document.addEventListener('input', handleInputDivision);
+    document.getElementById("inp_division_line_0_0").focus();
+
+    document.addEventListener('keydown', function (event) {
+        var thisEventId = event.target.id;
+
+        if (thisEventId.length >= 18) { // Đảm bảo rằng chuỗi ID có ít nhất 12 ký tự
+            var newEventId;
+            var newElement;
+
+            switch (event.code) {
+                case 'ArrowDown':
+                    var newDownChar = String(parseInt(thisEventId[18]) + 1);
+                    newEventId = thisEventId.substring(0, 18) + newDownChar + thisEventId.substring(19);
+                    break;
+
+                case 'ArrowUp':
+                    var newUpChar = String(Math.max(0, parseInt(thisEventId[18]) - 1)); // Đảm bảo ký tự không âm
+                    newEventId = thisEventId.substring(0, 18) + newUpChar + thisEventId.substring(19);
+                    break;
+
+                case 'ArrowLeft':
+                    var newLeftChar = String(parseInt(thisEventId[20]) - 1);
+                    newEventId = thisEventId.substring(0, 20) + newLeftChar + thisEventId.substring(21);
+                    break;
+
+                case 'ArrowRight':
+                    var newRightChar = String(Math.max(0, parseInt(thisEventId[20]) + 1)); // Đảm bảo ký tự không âm
+                    newEventId = thisEventId.substring(0, 20) + newRightChar + thisEventId.substring(21);
+                    break;
+
+                default:
+                    return; // Không xử lý các phím khác
+            }
+
+            newElement = document.getElementById(newEventId);
+            if (newElement) {
+                newElement.focus(); // Chuyển tiêu điểm đến phần tử mới
+            }
+        }
+    });
 
 }
 
@@ -805,6 +885,8 @@ function calculationOperatorNormal(num1, num2, operator) {
     td.appendChild(input);
     tr.appendChild(td);
     table.appendChild(tr);
+
+    document.getElementById('result').focus();
 }
 
 function generateCalculation() {
