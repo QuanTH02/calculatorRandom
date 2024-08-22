@@ -31,6 +31,7 @@
                     <div id="divCal" style="width: 100%; position: relative;">
 
                         <div id="divTableMulti" style="width: 100%;">
+                            <!-- Phép nhân -->
                             <!-- <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
                                     <th rowspan="2">x</th>
@@ -101,6 +102,7 @@
     
                             </table> -->
 
+                            <!-- Cộng trừ -->
                             <!-- <div class="divTableMulti">
                                 <table style="border-collapse: collapse;">
                                     <tr>
@@ -116,6 +118,101 @@
                                 </table>
                             </div> -->
 
+                            <!-- Phép chia -->
+                            <div class="divTableMulti">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <th id="width_exp">1</th>
+                                        <th>2</th>
+                                        <th>0</th>
+                                        <th>6</th>
+                                        <th>1</th>
+                                        <th>5</th>
+                                        <th>6</th>
+
+                                        <th class="td_border_right_multi" style="width: 10px;" ></th>
+                                        <th class="border_bot_division" style="width: 10px;" ></th>
+                                        
+                                        <th class="border_bot_division">3</th>
+                                        <th class="border_bot_division">4</th>
+                                        <th class="border_bot_division">8</th>
+                                        <th class="border_bot_division">6</th>
+                                    </tr>
+
+                                    <tr>
+                                        <td  style="height: 5px;"></td>
+                                        <td  style="height: 5px;"></td>
+                                        <td  style="height: 5px;"></td>
+                                        <td  style="height: 5px;"></td>
+                                        <td  style="height: 5px;"></td>
+                                        <td  style="height: 5px;"></td>
+                                        <td  style="height: 5px;"></td>
+
+                                        <td class="td_border_right_multi" style="height: 5px;"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+
+                                        <th class="td_border_right_multi" style="width: 10px;" rowspan="7"></th>
+                                        <th style="width: 10px;" rowspan="7"></th>
+
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td style="width: 46px;"></td>
+                                        <!-- <td><input class="inp_on_table" type="text"></td> -->
+                                    </tr>
+
+                                    <tr>
+                                        <td style="height: 5px;"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="height: 5px;"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                        <td><input class="inp_on_table" type="text"></td>
+                                    </tr>
+
+                                    <tr id="tr_addRowTable">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td colspan="2"><button id="addRowTable">Thêm bước tính</button></td>
+                                    </tr>
+
+                                </table>
+
+                            </div>
+
+
+
                         </div>
 
 
@@ -128,10 +225,12 @@
                         <div style="display: grid; justify-content: center; margin-left: 30px;">
                             <button onclick="checkAnswer()">Kiểm tra</button>
                         </div>
-                        
 
-                        <div class="popup" id="popup-correct">Trả lời đúng!</div>
-                        <div class="popup" id="popup-incorrect">Trả lời sai!</div>
+                        <div style="display: grid; justify-content: center; margin-left: 30px;">
+                            <div class="popup" id="popup-correct">Trả lời đúng!</div>
+                            <div class="popup" id="popup-incorrect">Trả lời sai!</div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -149,7 +248,7 @@
                 <br>
 
                 <label for="num1">Số chữ số của số thứ nhất:</label>
-                <input class="inp_num" type="number" id="num1" min="1" max="9" value="2">
+                <input class="inp_num" type="number" id="num1" min="1" max="9" value="4">
                 <br>
                 <label for="num2">Số chữ số của số thứ hai:</label>
                 <input class="inp_num" type="number" id="num2" min="1" max="9" value="3">
@@ -159,9 +258,9 @@
                 <br>
                 <label for="operator">Chọn phép tính:</label>
                 <select id="operator">
-                    <option value="+">Cộng (+)</option>
+                    <!-- <option value="+">Cộng (+)</option>
                     <option value="-">Trừ (-)</option>
-                    <option value="*">Nhân (*)</option>
+                    <option value="*">Nhân (*)</option> -->
                     <option value="/">Chia (/)</option>
                 </select>
                 <br>

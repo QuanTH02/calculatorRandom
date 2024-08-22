@@ -113,16 +113,15 @@ select {
 
 .popup {
     font-size: 15px;
-    position: fixed;
-    top: 120%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /* position: fixed; */
+    /* transform: translate(-50%, -50%); */
     padding: 10px;
     border-radius: 5px;
     color: white;
     font-weight: bold;
     display: none;
     width: 100px;
+    margin-top: 20px;
 }
 
 #popup-correct {
@@ -169,7 +168,7 @@ span{
     padding: 0px;
 }
 
-.td_border_bot_multi {
+.td_border_bot_multi, .border_bot_division {
     margin: 0px;
     padding: 0px;
     border-bottom: 2px black solid;
@@ -189,7 +188,12 @@ tr td {
     text-align: right;
 }
 
-/* #result_normal {
-  height: 40px;
-  font-size: 20px;
-} */
+.td_border_right_multi {
+    border-right: 2px black solid;
+}
+
+#addRowTable {
+    font-size: 12px;
+    padding: 2px;
+    background-color: #66a2e2;
+}

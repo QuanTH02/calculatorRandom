@@ -43,7 +43,7 @@ function quanNum(num) {
     return quan;
 }
 
-function checkAnswerNormal(num1, num2, operator) {
+function checkAnswerDivision(num1, num2) {
 
 }
 
@@ -318,7 +318,260 @@ function calculationOperatorMultiply(num1, num2, operator) {
     });
 }
 
+function checkNum1Division(num1, num2) {
+    while (num1 / num2 >= 10) {
+        num1 = Math.floor(num1 / 10);
+    }
+
+    return num1;
+}
+
+// Chia, Nhân, Trừ, Hạ xuống ngay trừ, tiếp
+
+function returnArrLineAnwerDivision(num1, num2) {
+    // 346
+    var arrLineAnwer = [];
+    arrLineAnwer[0] = [];
+    var answerDivision = num1 / num2;
+    var quanAnswerDivision = quanNum(answerDivision);
+    var quanNum1 = quanNum(num1);
+
+    var checkNum1 = checkNum1Division(num1, num2);
+    var arrCheckNum1 = Array.from(String(checkNum1), Number);
+    var arrNum1 = Array.from(String(num1), Number);
+
+    var indexCheck = arrCheckNum1.length;
+
+    // console.log(arrCheckNum1);
+    // console.log(arrNum1);
+    var i = 1;
+    while (true) {
+
+
+        var thuong = Math.floor(checkNum1 / num2);
+        arrLineAnwer[0].push(thuong);
+
+        var arrLine = new Array(quanNum1).fill('');
+        var tich1So = thuong * num2;
+        var arrTich1So = Array.from(String(tich1So), Number);
+        var quanTich1So = quanNum(tich1So);
+
+        var copyIndexCheck = indexCheck;
+        for (let j = 0; j < quanTich1So; j++) {
+            if (arrTich1So[quanTich1So - j - 1] != undefined) {
+                arrLine[copyIndexCheck - 1] = String(arrTich1So[quanTich1So - j - 1]);
+                copyIndexCheck -= 1;
+            }
+        }
+
+        arrLineAnwer[i] = [];
+        arrLineAnwer[i] = arrLine;
+
+        // console.log(quanTich1So);
+        // console.log(arrTich1So);
+        // console.log(arrLine);
+        // console.log(checkNum1);
+
+        indexCheck += 1;
+        i += 1;
+
+
+
+        checkNum1 = checkNum1 - thuong * num2;
+        console.log(checkNum1);
+
+
+
+
+        checkNum1 = checkNum1 * 10 + arrNum1[indexCheck - 1];
+
+        if (indexCheck > arrNum1.length) {
+            var arrLine = new Array(quanNum1).fill('');
+            arrLine[quanNum1 - 1] = '0';
+            arrLineAnwer[i] = arrLine;
+            break;
+        }
+
+        var arrLine = new Array(quanNum1).fill('');
+        var arrCheckNum1 = Array.from(String(checkNum1), Number);
+        var quanCheckNum1 = quanNum(checkNum1);
+
+        var copyIndexCheck = indexCheck;
+        for (let j = 0; j < quanCheckNum1; j++) {
+            if (arrCheckNum1[quanCheckNum1 - j - 1] != undefined) {
+                arrLine[copyIndexCheck - 1] = String(arrCheckNum1[quanCheckNum1 - j - 1]);
+                copyIndexCheck -= 1;
+            }
+        }
+
+        arrLineAnwer[i] = [];
+        arrLineAnwer[i] = arrLine;
+
+        // console.log(thuong);
+        i += 1;
+    }
+
+    console.log(arrLineAnwer);
+}
+
+function calculationOperatorDivision(num1, num2) {
+    var quanNum1 = quanNum(num1);
+    var quanNum2 = quanNum(num2);
+    var resultDivision = num1 / num2;
+    var quanResultDivision = quanNum(resultDivision);
+    var number1 = num1;
+    var number2 = num2;
+
+    // Tạo div chính chứa bảng
+    const divTableMulti = document.createElement('div');
+    divTableMulti.className = 'divTableMulti';
+
+    // Tạo phần tử bảng
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    divTableMulti.appendChild(table);
+
+    let tr = document.createElement('tr');
+
+
+    for (let i = 0; i < quanNum1; i++) {
+        let th = document.createElement('th');
+        th.textContent = Math.floor(num1 / Math.pow(10, quanNum1 - i - 1));
+        num1 = num1 % Math.pow(10, quanNum1 - i - 1);
+        if (i == 0) {
+            th.id = 'width_exp';
+        }
+        tr.appendChild(th);
+    }
+
+    th = document.createElement('th');
+    th.className = 'td_border_right_multi';
+    th.style.width = '10px';
+    tr.appendChild(th);
+
+    th = document.createElement('th');
+    th.className = 'border_bot_division';
+    th.style.width = '10px';
+    tr.appendChild(th);
+
+    for (let i = 0; i < quanNum2; i++) {
+        let th = document.createElement('th');
+        th.className = 'border_bot_division';
+        th.textContent = Math.floor(num2 / Math.pow(10, quanNum2 - i - 1));
+        num2 = num2 % Math.pow(10, quanNum2 - i - 1);
+        tr.appendChild(th);
+    }
+
+    table.appendChild(tr);
+
+    // Tạo hàng thứ hai với các thẻ td
+    tr = document.createElement('tr');
+    for (let i = 0; i < quanNum1; i++) {
+        const td = document.createElement('td');
+        td.style.height = '5px';
+        tr.appendChild(td);
+    }
+
+    let td = document.createElement('td');
+    td.className = 'td_border_right_multi';
+    td.style.height = '5px';
+    tr.appendChild(td);
+
+    table.appendChild(tr);
+
+    // Tạo hàng thứ ba với các ô input
+    tr = document.createElement('tr');
+    for (let i = 0; i < quanNum1; i++) {
+        td = document.createElement('td');
+        const input = document.createElement('input');
+        input.className = 'inp_on_table';
+        input.type = 'text';
+        td.appendChild(input);
+        tr.appendChild(td);
+    }
+
+    th = document.createElement('th');
+    th.className = 'td_border_right_multi';
+    th.style.width = '10px';
+    th.rowSpan = 2 * quanNum1 + 1;
+    tr.appendChild(th);
+
+    th = document.createElement('th');
+    th.style.width = '10px';
+    th.rowSpan = 2 * quanNum1 + 1;
+    tr.appendChild(th);
+
+    for (let i = 0; i < quanNum2; i++) {
+        td = document.createElement('td');
+        if (i >= quanResultDivision) {
+            console.log(document.getElementById("width_exp").offsetWidth);
+            td.style.width = document.getElementById("width_exp").offsetWidth + 'px';
+        } else {
+            const input = document.createElement('input');
+            input.className = 'inp_on_table';
+            input.type = 'text';
+            td.appendChild(input);
+        }
+
+        tr.appendChild(td);
+    }
+
+    table.appendChild(tr);
+
+    // Tạo hàng trống với height 5px
+    tr = document.createElement('tr');
+    td = document.createElement('td');
+    td.style.height = '5px';
+    tr.appendChild(td);
+    table.appendChild(tr);
+
+    for (let k = 0; k < quanResultDivision - 1; k++) {
+        // Tạo các hàng tiếp theo với các ô input
+            tr = document.createElement('tr');
+            for (let j = 0; j < quanNum1; j++) {
+                td = document.createElement('td');
+                const input = document.createElement('input');
+                input.className = 'inp_on_table';
+                input.type = 'text';
+                td.appendChild(input);
+                tr.appendChild(td);
+            }
+            table.appendChild(tr);
+
+            tr = document.createElement('tr');
+            td = document.createElement('td');
+            td.style.height = '5px';
+            tr.appendChild(td);
+            table.appendChild(tr);
+        
+    }
+
+    // Tạo hàng cuối với nút bấm
+    tr = document.createElement('tr');
+    for (let i = 0; i < 5; i++) {
+        td = document.createElement('td');
+        tr.appendChild(td);
+    }
+
+    td = document.createElement('td');
+    td.colSpan = 2;
+    const button = document.createElement('button');
+    button.id = 'addRowTable';
+    button.textContent = 'Thêm bước tính';
+    td.appendChild(button);
+    tr.appendChild(td);
+
+    table.appendChild(tr);
+
+    // Thêm bảng vào phần tử div với id="divTableMulti"
+    document.getElementById('divTableMulti').appendChild(divTableMulti);
+
+}
+
 function calculationOperatorNormal(num1, num2, operator) {
+    var quanNum1 = quanNum(num1);
+    var quanNum2 = quanNum(num2);
     // Tạo phần tử div bao ngoài
     const divTableMulti = document.createElement('div');
     divTableMulti.className = 'divTableMulti';
@@ -335,7 +588,7 @@ function calculationOperatorNormal(num1, num2, operator) {
     let tr = document.createElement('tr');
     let th = document.createElement('th');
     th.setAttribute('rowspan', 2);
-    th.textContent = '+';
+    th.textContent = operator;
     tr.appendChild(th);
 
     th = document.createElement('th');
@@ -381,9 +634,16 @@ function calculationOperatorNormal(num1, num2, operator) {
     input.className = 'inp_on_table_normal';
     input.type = 'text';
     input.id = 'result';
-    input.style.width = doDaiGachChan + 'px';
 
-    // console.log(doDaiGachChan);
+    if (doDaiGachChan) {
+        input.style.width = doDaiGachChan + 'px';
+    } else {
+        if (quanNum1 > quanNum2) {
+            input.style.width = 52 + 20 * quanNum1 + 'px';
+        } else {
+            input.style.width = 52 + 20 * quanNum2 + 'px';
+        }
+    }
 
     td.appendChild(input);
     tr.appendChild(td);
@@ -405,8 +665,7 @@ function generateCalculation() {
         var num1 = generateRandomNumber(num1Digits);
         var num2 = generateRandomNumber(num2Digits);
 
-        numberGen1 = num1;
-        numberGen2 = num2;
+
 
         if (operator == "*") {
             // document.getElementById("calcu").style.display = 'none';
@@ -441,7 +700,9 @@ function generateCalculation() {
             }
         }
     }
-    document.getElementById("divTableMulti").innerHTML = '';
+    numberGen1 = num1;
+    numberGen2 = num2;
+    // document.getElementById("divTableMulti").innerHTML = '';
     calculationOperatorNormal(num1, num2, operator);
     // document.getElementById("calcu").style.display = 'block';
 
@@ -474,15 +735,21 @@ function showPopup(id) {
 }
 
 function checkAnswer() {
-    // var result = parseInt(document.getElementById('result').value);
-    var correctAnswer = eval(numberGen1 + chooseOperator + numberGen2);
-
     if (chooseOperator == "+" || chooseOperator == "-" || chooseOperator == "/") {
+        var result = parseInt(document.getElementById('result').value);
+        var correctAnswer = eval(numberGen1 + chooseOperator + numberGen2);
+
         if (result === correctAnswer) {
             showPopup("popup-correct");
+            // console.log(numberGen1 + chooseOperator + numberGen2);
+            // console.log("Correct answer: " + correctAnswer);
+            // console.log("Your answer: " + result);
             incrementCorrectScore();
         } else {
             showPopup("popup-incorrect");
+            // console.log(numberGen1 + chooseOperator + numberGen2);
+            // console.log("Correct answer: " + correctAnswer);
+            // console.log("Your answer: " + result);
             incrementIncorrectScore();
         }
     } else {
@@ -558,3 +825,29 @@ function start() {
 
 //Test
 generateCalculation();
+
+document.getElementById('addRowTable').addEventListener('click', function () {
+    var trAddRow = document.getElementById('tr_addRowTable');
+
+    var newRowHeight = document.createElement('tr');
+    newRowHeight.innerHTML = `
+        <td style="height: 5px;"></td>
+    `;
+
+    trAddRow.parentNode.insertBefore(newRowHeight, trAddRow);
+
+    var newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td><input class="inp_on_table" type="text"></td>
+        <td><input class="inp_on_table" type="text"></td>
+        <td><input class="inp_on_table" type="text"></td>
+        <td><input class="inp_on_table" type="text"></td>
+        <td><input class="inp_on_table" type="text"></td>
+        <td><input class="inp_on_table" type="text"></td>
+        <td><input class="inp_on_table" type="text"></td>
+    `;
+    trAddRow.parentNode.insertBefore(newRow, trAddRow);
+
+    calculationOperatorDivision(1206156, 3486);
+});
+
