@@ -912,6 +912,12 @@ function generateCalculation() {
             return;
         } else {
             if (operator == "+") {
+                if (num1Digits == 1 && num2Digits == 1) {
+                    if (num1 + num2 <= 10) {
+                        break;
+                    } else continue
+                }
+
                 break;
             }
 

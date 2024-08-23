@@ -197,3 +197,11 @@ tr td {
     padding: 2px;
     background-color: #66a2e2;
 }
+
+.btnResultContent {
+    width: 30px;
+    height: 30px;
+    padding: 0px;
+    border-radius: 50%;
+    
+}
