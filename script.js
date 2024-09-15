@@ -768,7 +768,7 @@ function calculationOperatorDivision(num1, num2) {
     document.addEventListener('keydown', function (event) {
         var thisEventId = event.target.id;
 
-        if (thisEventId.length >= 18) { // Đảm bảo rằng chuỗi ID có ít nhất 12 ký tự
+        if (thisEventId.length >= 18) { // Đảm bảo rằng chuỗi ID có ít nhất 18 ký tự
             var newEventId;
             var newElement;
 
@@ -1083,7 +1083,7 @@ function start() {
 }
 
 //Test
-// generateCalculation();
+generateCalculation();
 
 
 
